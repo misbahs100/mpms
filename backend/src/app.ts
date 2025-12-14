@@ -17,7 +17,7 @@ dotenv.config();
 const app = express();
 app.use(cors({
   origin: (origin, callback) => {
-    const allowedOrigins = ['https://mpms-irax.onrender.com', 'https://mpms-sepia.vercel.app'];
+    const allowedOrigins = ['http://localhost:3000', 'http://localhost:4000', 'https://mpms-irax.onrender.com', 'https://mpms-sepia.vercel.app'];
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {

@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ProjectCardSkeleton } from '../../../components/ui/Skeleton';
 
 function getToken() { return (typeof window!=='undefined') ? localStorage.getItem('mpms_token') : null; }
 function getUser() { return localStorage.getItem('mpms_user'); }
@@ -55,7 +56,7 @@ export default function AdminProjects() {
       </form>
 
       <div className="grid md:grid-cols-3 gap-4">
-        {projects.map(p => (
+        {projects.length > 0 ? projects.map(p => (
           <div key={p.id} className="bg-white p-4 rounded shadow">
             <h3 className="font-semibold">{p.title}</h3>
             <div className="text-sm text-gray-500">{p.client}</div>
@@ -64,7 +65,7 @@ export default function AdminProjects() {
               <a href={`/admin/projects/${p.id}`} className="text-sky-600">Open</a>
             </div>
           </div>
-        ))}
+        )) : <ProjectCardSkeleton />}
       </div>
     </div>
   );

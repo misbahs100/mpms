@@ -1,12 +1,14 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { TaskListSkeleton } from '../../../components/ui/Skeleton';
 
 function getToken() { return (typeof window!=='undefined') ? localStorage.getItem('mpms_token') : null; }
 
 export default function UserProject() {
   const [project, setProject] = useState<any>(null);
   const [sprints, setSprints] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(()=> {
@@ -14,11 +16,13 @@ export default function UserProject() {
     if (!token) { router.push('/auth/login'); return; }
     const parts = window.location.pathname.split('/');
     const id = parts[parts.length-1];
+    setLoading(true)
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/projects/${id}`, { headers: { Authorization: `Bearer ${token}` }})
       .then(r=>r.json()).then(j => {
         if (j.error) return;
         setProject(j.project); setSprints(j.sprints || []);
       });
+      setLoading(false)
   }, [router]);
 
   return (
@@ -27,8 +31,8 @@ export default function UserProject() {
         <h2 className="text-xl font-semibold">{project?.title || 'Project'}</h2>
         <a href="/dashboard" className="text-sm">Back</a>
       </div>
-{sprints.length === 0 ? <p>No Sprints in this project.</p>
-:
+      {loading ? <TaskListSkeleton /> : 
+sprints.length > 0 ? 
 
       <div className="space-y-4">
         {sprints.map(s => (
@@ -41,6 +45,7 @@ export default function UserProject() {
           </details>
         ))}
       </div>
+      : <p>No Sprints in this project.</p>
       }
     </div>
   );

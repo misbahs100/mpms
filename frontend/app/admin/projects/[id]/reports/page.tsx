@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { getToken } from "../../../../../lib/utils";
+import { TaskListSkeleton } from "../../../../../components/ui/Skeleton";
 
 export default function ProjectReport({ params }: any) {
   const { id } = params;
   const [report, setReport] = useState<any>(null);
+
+
 
   useEffect(() => {
     const token = getToken();
@@ -19,7 +22,7 @@ export default function ProjectReport({ params }: any) {
       .then(setReport);
   }, []);
 
-  if (!report) return <div className="p-5">Loading report...</div>;
+  if (!report) return <TaskListSkeleton />
 
   return (
     <div className="p-5">

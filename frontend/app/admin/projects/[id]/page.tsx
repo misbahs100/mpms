@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { ProjectSkeleton, TaskListSkeleton } from '../../../../components/ui/Skeleton';
 
 function getToken() { return (typeof window!=='undefined') ? localStorage.getItem('mpms_token') : null; }
 
@@ -13,17 +14,20 @@ export default function ProjectPage() {
   const [title, setTitle] = useState('');
   const [err, setErr] = useState('');
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   useEffect(()=> {
     const token = getToken();
     if (!token) { router.push('/auth/login'); return; }
     const parts = window.location.pathname.split('/');
     const id = parts[parts.length-1];
+    setLoading(true)
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/projects/${id}`, { headers: { Authorization: `Bearer ${token}` }})
       .then(r=>r.json()).then(j => {
         if (j.error) setErr(j.error);
         else { setProject(j.project); setSprints(j.sprints || []); }
       });
+      setLoading(false)
   }, [router]);
 
   async function createSprint(e:any) {
@@ -50,7 +54,7 @@ export default function ProjectPage() {
         <a href="/admin/projects" className="text-sm">Back </a>
       </div>
       {err && <div className="text-red-600">{err}</div>}
-      {project && (
+      {project ? (
         <div className="bg-white p-4 rounded shadow mb-4">
           <div className="flex justify-between">
           <h3 className="text-xl">{project.title}</h3>
@@ -59,7 +63,7 @@ export default function ProjectPage() {
           <div className="text-sm text-gray-500">{project.client}</div>
           <div className="mt-2">Progress: {project.progress || 0}%</div>
         </div>
-      )}
+      ): <ProjectSkeleton/>}
 
       <form onSubmit={createSprint} className="mb-4 bg-white p-4 rounded shadow">
         <div className="flex gap-3">
@@ -69,7 +73,7 @@ export default function ProjectPage() {
       </form>
 
       <div className="space-y-3">
-        {sprints.map(s => (
+        {sprints.length>0 ? sprints.map(s => (
           <div key={s.id} className="bg-white p-3 rounded shadow">
             <div className="flex justify-between">
               <div>
@@ -81,7 +85,7 @@ export default function ProjectPage() {
               </div>
             </div>
           </div>
-        ))}
+        )) : <TaskListSkeleton />}
       </div>
     </div>
   );

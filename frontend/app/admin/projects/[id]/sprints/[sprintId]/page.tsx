@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getTasksBySprint, createTask, updateTask } from "../../../../../../lib/api";
+import { Skeleton, TaskListSkeleton } from "../../../../../../components/ui/Skeleton";
 
 export default function SprintPage({ params }: any) {
   const { id: projectId, sprintId } = params;
@@ -89,11 +90,13 @@ export default function SprintPage({ params }: any) {
         <button className="px-4 py-2 bg-slate-900 text-white rounded mt-3">
           Add Task
         </button>
-      </form>
+        
 
+      </form>
       {/* Tasks List */}
       {loading ? (
-        <div>Loading...</div>
+       <TaskListSkeleton />
+        
       ) : (
         <div className="space-y-3">
           {tasks?.length > 0 && tasks.map((t) => (

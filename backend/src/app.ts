@@ -16,7 +16,14 @@ dotenv.config();
 
 const app = express();
 app.use(cors({
-  origin: 'https://mpms-irax.onrender.com',
+  origin: (origin, callback) => {
+    const allowedOrigins = ['https://mpms-irax.onrender.com', 'https://mpms-sepia.vercel.app'];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
